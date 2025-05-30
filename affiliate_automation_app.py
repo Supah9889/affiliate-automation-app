@@ -14,7 +14,6 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from starlette.middleware.wsgi import WSGIMiddleware
 from streamlit.web.server import Server
-import requests
 
 # === FASTAPI Content Endpoint ===
 CONTENT_POOL = [
@@ -43,6 +42,8 @@ def fetch_content():
 
 # Attach FastAPI to Streamlit app
 Server.get_current()._set_app_asgi_app(WSGIMiddleware(api_app))
+
+# External API Fetch Function
 def fetch_live_content():
     try:
         response = requests.get("https://FastAPIContent--seanhargain055.repl.co/api/fetch_content")
@@ -52,7 +53,7 @@ def fetch_live_content():
             return [{"error": f"Status code: {response.status_code}"}]
     except Exception as e:
         return [{"error": f"API error: {e}"}]
-        
+
 # === Begin Streamlit App ===
 st.set_page_config(page_title="Affiliate Automation Hub", layout="wide")
 st.title("🧠 Affiliate Automation with Built-In API")
@@ -62,15 +63,6 @@ if st.button("🌐 Fetch Live API Content"):
     for item in content:
         st.json(item)
 
-        if response.status_code == 200:
-            content = response.json()
-            st.success("✅ Fetched content from live endpoint:")
-            for item in content:
-                st.json(item)
-        else:
-            st.error("❌ Failed to fetch data from endpoint.")
-    except Exception as e:
-        st.error(f"⚠️ Error: {e}")
 
 # Add your affiliate content generation app code *below this* or in additional tabs.
 # You can also import the rest from another module if preferred.
