@@ -1,49 +1,8 @@
-# === All imports (merged) ===
+# === Imports ===
 import streamlit as st
-import json
-import csv
-import random
-from datetime import datetime, timedelta
-import pandas as pd
-import time
-import re
 import requests
 
-# FastAPI integration
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
-from starlette.middleware.wsgi import WSGIMiddleware
-from streamlit.web.server import Server
-
-# === FASTAPI Content Endpoint ===
-CONTENT_POOL = [
-    {
-        "platform": "Reddit",
-        "title": "PSA: These resistance bands helped me lose 30lbs without a gym",
-        "content": "I didn’t think bands would work. But now I’m down 30lbs in 4 months. Game changer. [affiliate link here]"
-    },
-    {
-        "platform": "Pinterest",
-        "title": "💪 These $15 Resistance Bands Replaced My Entire Gym!",
-        "description": "Saved me $1200/year. Perfect for busy moms or small spaces. #homeworkout #fitness #affiliate"
-    },
-    {
-        "platform": "TikTok",
-        "script": "POV: You found the $15 resistance bands that replaced your gym ✨\n\n*Shows before/after*\n\nLink in bio! #fitness #musthave"
-    }
-]
-
-api_app = FastAPI()
-
-@api_app.get("/api/fetch_content")
-def fetch_content():
-    sample = random.sample(CONTENT_POOL, 2)
-    return JSONResponse(content=sample)
-
-# Attach FastAPI to Streamlit app
-Server.get_current()._set_app_asgi_app(WSGIMiddleware(api_app))
-
-# External API Fetch Function
+# === Function to Fetch From External FastAPI ===
 def fetch_live_content():
     try:
         response = requests.get("https://FastAPIContent--seanhargain055.repl.co/api/fetch_content")
@@ -54,7 +13,7 @@ def fetch_live_content():
     except Exception as e:
         return [{"error": f"API error: {e}"}]
 
-# === Begin Streamlit App ===
+# === Streamlit UI ===
 st.set_page_config(page_title="Affiliate Automation Hub", layout="wide")
 st.title("🧠 Affiliate Automation with Built-In API")
 
@@ -63,6 +22,4 @@ if st.button("🌐 Fetch Live API Content"):
     for item in content:
         st.json(item)
 
-
-# Add your affiliate content generation app code *below this* or in additional tabs.
-# You can also import the rest from another module if preferred.
+# You can build more features under here later
